@@ -3,30 +3,30 @@
     <section class="product mt-3 elevation-10">
       <v-layout row wrap>
         <v-flex xs12 lg6>
-          <img src="https://image.ibb.co/jBZOMo/ASUS_TUF_Gaming_FX504_GD.jpg" alt="" class="product_img">
+          <img :src="product.imageSrc" alt="" class="product_img">
         </v-flex>
         <v-flex xs12 lg6>
           <div class="product_info">
-            <h5 class="product_title display-1 mb-3 mt-3">Lorem</h5>
+            <h5 class="product_title display-1 mb-3 mt-3">{{product.title}}</h5>
             <p class="product_category title">
-              <span class="product_title">Vendor: </span>Lorem
+              <span class="product_title">Vendor: </span>{{product.vendor}}
             </p>
             <p class="product_price title">
-              <span class="product_title">Price: </span>1000$
+              <span class="product_title">Price: </span>{{product.price}}$
             </p>
             <p class="product_color">
               <span class="product_title">Color: </span>
               <span
-                  :title="'purple'"
-                  :style="{backgroundColor: 'purple'}"
+                  :title="product.color"
+                  :style="{backgroundColor: product.color}"
                   class="product_color__bg"
               ></span>
             </p>
             <p class="title">
-              <span class="product_title">Material: </span>Lorem
+              <span class="product_title">Material: </span>{{product.material}}
             </p>
             <div class="title mb-5">
-              <p class="product_title mb-2">Description:</p>efgwerertgw wrgwerg
+              <p class="product_title mb-2">Description:</p>{{product.description}}
             </div>
             <v-btn
                 color="primary"
@@ -45,8 +45,12 @@
 
 <script>
   export default {
-    data () {
-      return {}
+    props: ['id'],
+    computed: {
+      product () {
+        const id = this.id
+        return this.$store.getters.productById(id)
+      }
     }
   }
 </script>
@@ -84,7 +88,6 @@
   .product_price {
     color: red;
   }
-
   .product_color__bg {
     display: inline-block;
     width: 50px;
