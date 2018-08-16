@@ -8,6 +8,7 @@ import NewProduct from '../components/Products/NewProduct'
 import Checkout from '../components/User/Checkout'
 import Login from '../components/Auth/Login'
 import Register from '../components/Auth/Register.vue'
+import Contract from '../components/Contract/Contract.vue'
 
 Vue.use(Router)
 
@@ -40,6 +41,12 @@ export default new Router({
       path: '/checkout',
       name: 'checkout',
       component: Checkout,
+      beforeEnter: AuthGuard
+    },
+    {
+      path: '/contract',
+      name: 'contract',
+      component: Contract,
       beforeEnter: AuthGuard
     },
     {
