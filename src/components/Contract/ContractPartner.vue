@@ -32,7 +32,7 @@
   <v-container v-else>
     <v-tabs
         v-model="active"
-        slider-color="yellow"
+        slider-color="primary"
     >
       <v-tab
           v-for="tab in tabsDetails"
@@ -50,15 +50,55 @@
             <v-container grid-list-md>
               <v-layout row wrap>
                 <v-flex xs12 sm6>
+                  <v-flex xs12>
+                    <h3>Kontakt</h3>
+                  </v-flex>
                   <v-text-field
                       :value="userDetails.name"
+                      readonly
+                  ></v-text-field>
+                  <v-text-field
+                      :value="userDetails.street"
+                      readonly
+                  ></v-text-field>
+                  <v-text-field
+                      :value="userDetails.adressAdditional"
+                      readonly
+                  ></v-text-field>
+                  <v-layout row>
+                    <v-flex xs3>
+                      <v-text-field
+                          :value="userDetails.plz"
+                          readonly
+                      ></v-text-field>
+                    </v-flex>
+                    <v-flex xs9>
+                      <v-text-field
+                          :value="userDetails.sity"
+                          readonly
+                      ></v-text-field>
+                    </v-flex>
+                  </v-layout>
+                  <v-text-field
+                      :value="userDetails.telefonnummer"
+                      readonly
+                  ></v-text-field>
+                  <v-text-field
+                      :value="userDetails.email"
                       readonly
                   ></v-text-field>
                 </v-flex>
 
                 <v-flex xs12 sm6>
+                  <v-flex xs12 sm6>
+                    <h3>Bankverbindung</h3>
+                  </v-flex>
                   <v-text-field
-                      :value="userDetails.name"
+                      :value="userDetails.bank"
+                      readonly
+                  ></v-text-field>
+                  <v-text-field
+                      :value="userDetails.iban"
                       readonly
                   ></v-text-field>
                 </v-flex>
@@ -71,10 +111,38 @@
           :key="2"
       >
         <v-card flat>
-          <v-card-text>{{ 2 }}</v-card-text>
+          <v-card-text>
+            <v-container
+                fluid
+                grid-list-xl
+            >
+              <v-layout
+                  align-center
+                  wrap
+              >
+                <v-flex xs12 sm6>
+                  <v-select
+                      v-model="userDrivers"
+                      :items="drivers"
+                      chips
+                      label="Fahrer"
+                      multiple
+                  ></v-select>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
         </v-card>
       </v-tab-item>
     </v-tabs>
+    <v-layout class="justify-center mt-3">
+      <v-btn
+          color="primary"
+          @click="backToUserList"
+      >
+        Zurück zu Kundenliste
+      </v-btn>
+    </v-layout>
   </v-container>
 </template>
 
@@ -85,22 +153,24 @@
     props: ['users', 'userDetails'],
     data () {
       return {
-        search: '',
-        pagination: {},
-        selected: [],
+        active: null,
         headers: [
           {
             text: 'Name',
             value: 'name'
           }
         ],
+        pagination: {
+          page: 1
+        },
+        show_details: false,
+        search: '',
+        selected: [],
         tabsDetails: [
           {name: 'Kunde'},
           {name: 'Fahrer'}
         ],
-        show_details: false,
-        active: null,
-        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+        userDrivers: []
       }
     },
     computed: {
@@ -110,87 +180,37 @@
         ) {
           return 0
         }
-
         return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
+      },
+      drivers () {
+        let drivers = []
+        this.userDetails.drivers.forEach(driver => {
+          drivers.push(driver.driver_name)
+        })
+        return drivers
       }
     },
     methods: {
       showDetails (detail) {
         this.show_details = true
         this.$emit('user-details', detail)
+        this.$emit('can-continue', {value: true})
+      },
+      backToUserList () {
+        this.show_details = false
+        this.$emit('user-details', null)
+        this.$emit('can-continue', {value: false})
       }
     },
-    /*    watch: {
-          user_details: {
-            handler: function () {
-              console.log(this.user_details)
-              let vm = this
-              if (vm.user_details !== null) {
-                console.log(vm.user_details.drivers)
-                vm.driversOptions = []
-                vm.selectedDriver = []
-                vm.user_details.drivers.forEach(function (driver) {
-                  let obj = {
-                    name: driver.driver_name,
-                    code: driver.driver_id
-                  }
-                  vm.driversOptions.push(obj)
-                })
-                this.$emit('user-details', this.user_details)
-                this.$emit('can-continue', {value: true})
-              } else {
-                this.selectedDriver = []
-                this.$emit('can-continue', {value: false})
-              }
-            },
-            deep: true
-          }
-        },
-        methods: {
-          addTag(newTag) {
-            const tag = {
-              name: newTag,
-              code: newTag.substring(0, 2) + Math.floor((Math.random() * 10000000))
-            }
-            this.driversOptions.push(tag)
-            this.selectedDriver.push(tag)
-          },
-          closeUser() {
-            this.hideShowUser = false,
-              this.user_details = null
-          },
-          onFiltered(filteredItems) {
-            this.totalRows = filteredItems.length
-            this.currentPage = 1
-          },
-          newUserShow() {
-            this.hideShowUser = true
-          },
-          saveNewUser() {
-            this.hideShowUser = false
-          },
-          showDetail(details) {
-            this.user_details = details
-            this.hideShowUser = true
-          },
-          toggleUser(payload) {
-            this.hideShowUser = payload
-            this.user_details = null
-          }
-        },*/
     created () {
       console.log(this.users)
-    }
+    },
+    watch: {
+      userDrivers () {
+        console.log(this.userDrivers)
+        this.$emit('user-drivers', this.userDrivers)
+      }
+    },
   }
 </script>
-
-<style scoped>
-  .closeUser {
-    cursor: pointer;
-    position: absolute;
-    right: 15px;
-    text-transform: uppercase;
-    top: 15px;
-  }
-</style>
 

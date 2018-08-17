@@ -77,7 +77,7 @@
         if (this.contractName === '') {
           this.$emit('can-continue', {value: false})
         } else {
-          this.$emit('contract-name', this.contractName)
+          this.$emit('contract-type', this.contractName)
           this.$emit('can-continue', {value: true})
         }
       }

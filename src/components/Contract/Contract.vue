@@ -25,39 +25,44 @@
           :step="n"
       >
         <v-card
-            class="mb-5"
             color="grey lighten-1"
         >
           <ContractType
               v-if="n === 1"
               @can-continue="proceed"
+              @contract-type="contract_type"
           ></ContractType>
           <ContractPartner
               v-if="n === 2"
               :users="users"
               :userDetails="userDetails"
               @user-details="user_details"
+              @user-drivers="user_drivers"
+              @can-continue="proceed"
           ></ContractPartner>
           <ContractCars v-if="n === 3"></ContractCars>
 
         </v-card>
       </v-stepper-content>
-      <div class="left">
-        <v-btn v-if="e1 !== 1"
-               @click="backStep"
-        >Cancel
-        </v-btn>
+      <div class="ma-3 overflow-hidden">
+        <div class="left">
+          <v-btn v-if="e1 !== 1"
+                 @click="backStep"
+          >Back
+          </v-btn>
+        </div>
+        <div class="right">
+          <v-btn
+              color="primary"
+              @click="nextStep"
+              v-if="e1 !== 3"
+              :disabled="!canContinue"
+          >
+            Next
+          </v-btn>
+        </div>
       </div>
-      <div class="right">
-        <v-btn
-            color="primary"
-            @click="nextStep"
-            v-if="e1 !== 3"
-            :disabled="!canContinue"
-        >
-          Continue
-        </v-btn>
-      </div>
+
     </v-stepper-items>
   </v-stepper>
 </template>
@@ -80,6 +85,8 @@
         steps: 3,
         canContinue: false,
         userDetails: null,
+        userDrivers: null,
+        contractType: '',
         users: [{
           'adressAdditional': 'Gebäude 1A',
           'bank': 'Commerzbank',
@@ -421,9 +428,17 @@
       }
     },
     watch: {
-      steps (val) {
-        if (this.e1 > val) {
-          this.e1 = val
+      e1 () {
+        console.log(this.e1, this.contractType, this.userDetails)
+        if (this.e1 === 1 && !this.contractType) {
+          console.log('step1 = false')
+          this.canContinue = false
+        } else if (this.e1 === 2 && !this.userDetails) {
+          console.log('step2 = false')
+          this.canContinue = false
+        } else {
+          console.log('stepElse = true')
+          this.canContinue = true
         }
       }
     },
@@ -435,12 +450,16 @@
         this.e1 = this.e1 - 1
       },
       proceed (payload) {
-        console.log(payload)
         this.canContinue = payload.value
       },
       user_details (payload) {
         this.userDetails = payload
-        console.log(this.userDetails, payload)
+      },
+      user_drivers (payload) {
+        this.userDrivers = payload
+      },
+      contract_type (payload) {
+        this.contractType = payload
       }
     },
     created () {
