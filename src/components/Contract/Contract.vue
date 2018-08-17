@@ -40,7 +40,11 @@
               @user-drivers="user_drivers"
               @can-continue="proceed"
           ></ContractPartner>
-          <ContractCars v-if="n === 3"></ContractCars>
+          <ContractCars
+              v-if="n === 3"
+              @car-details="car_details"
+              :carDetails="carDetails"
+          ></ContractCars>
 
         </v-card>
       </v-stepper-content>
@@ -84,6 +88,7 @@
         e1: 1,
         steps: 3,
         canContinue: false,
+        carDetails: null,
         userDetails: null,
         userDrivers: null,
         contractType: '',
@@ -457,6 +462,9 @@
       },
       user_drivers (payload) {
         this.userDrivers = payload
+      },
+      car_details (payload) {
+        this.carDetails = payload
       },
       contract_type (payload) {
         this.contractType = payload
