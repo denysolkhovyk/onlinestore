@@ -205,7 +205,7 @@
     }
   ]
   export default {
-    props: ['users', 'userDetails', 'carDetails'],
+    props: ['carDetails'],
     data () {
       return {
         active: null,
@@ -225,7 +225,6 @@
         },
         show_details: false,
         search: ''
-
       }
     },
     computed: {
