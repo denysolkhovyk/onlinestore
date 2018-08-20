@@ -1,7 +1,6 @@
 <template>
   <v-container fluid v-if="!show_details">
     <v-card-title>
-      Nutrition
       <v-spacer></v-spacer>
       <v-text-field
           v-model="search"
@@ -150,7 +149,7 @@
   /* eslint-disable */
 
   export default {
-    props: ['users', 'userDetails'],
+    props: ['userDetails'],
     data () {
       return {
         active: null,
@@ -188,6 +187,12 @@
           drivers.push(driver.driver_name)
         })
         return drivers
+      },
+      users () {
+        return this.$store.getters.contractPartner
+      },
+      loading () {
+        return this.$store.getters.loading
       }
     },
     methods: {

@@ -112,104 +112,11 @@
 
 <script>
   /* eslint-disable */
-  const cars = [
-    {
-      'name': 'Porsche',
-      'model': '911',
-      'klasse': 'Sportwagen',
-      'body_style': 'Cabriolet',
-      'dealer_info': {
-        'dealer_name': 'Karl Fiat',
-        'dealer_street': 'Autoweg 19',
-        'dealer_plz': '12345',
-        'dealer_city': 'München'
-      },
-      'location_info': {
-        'location_name': 'Harry Potter',
-        'location_street': 'Bonnerstrasse 246',
-        'location_plz': '50968',
-        'location_city': 'Köln'
-      }
-    },
-    {
-      'name': 'Nissan',
-      'model': 'GT-R',
-      'klasse': 'Sportwagen',
-      'body_style': 'Coupe',
-      'dealer_info': {
-        'dealer_name': 'Karl Fiat',
-        'dealer_street': 'Autoweg 19',
-        'dealer_plz': '12345',
-        'dealer_city': 'München'
-      },
-      'location_info': {
-        'location_name': 'Harry Potter',
-        'location_street': 'Bonnerstrasse 246',
-        'location_plz': '50968',
-        'location_city': 'Köln'
-      }
-    },
-    {
-      'name': 'BMW',
-      'model': 'M3',
-      'klasse': 'Mittelklasse',
-      'body_style': 'Limousine',
-      'dealer_info': {
-        'dealer_name': 'Karl Fiat',
-        'dealer_street': 'Autoweg 19',
-        'dealer_plz': '12345',
-        'dealer_city': 'München'
-      },
-      'location_info': {
-        'location_name': 'Harry Potter',
-        'location_street': 'Bonnerstrasse 246',
-        'location_plz': '50968',
-        'location_city': 'Köln'
-      }
-    },
-    {
-      'name': 'Audi',
-      'model': 'S5',
-      'klasse': 'Mittelklasse',
-      'body_style': 'Kombilimousine',
-      'dealer_info': {
-        'dealer_name': 'Karl Fiat',
-        'dealer_street': 'Autoweg 19',
-        'dealer_plz': '12345',
-        'dealer_city': 'München'
-      },
-      'location_info': {
-        'location_name': 'Harry Potter',
-        'location_street': 'Bonnerstrasse 246',
-        'location_plz': '50968',
-        'location_city': 'Köln'
-      }
-    },
-    {
-      'name': 'Audi',
-      'model': 'TT',
-      'klasse': 'Sportwagen',
-      'body_style': 'Roadster',
-      'dealer_info': {
-        'dealer_name': 'Karl Fiat',
-        'dealer_street': 'Autoweg 19',
-        'dealer_plz': '12345',
-        'dealer_city': 'München'
-      },
-      'location_info': {
-        'location_name': 'Harry Potter',
-        'location_street': 'Bonnerstrasse 246',
-        'location_plz': '50968',
-        'location_city': 'Köln'
-      }
-    }
-  ]
   export default {
     props: ['carDetails'],
     data () {
       return {
         active: null,
-        cars: cars,
         headers: [
           {
             text: 'Auto',
@@ -235,11 +142,13 @@
           return 0
         }
         return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
-      }
+      },
+      cars () {
+        return this.$store.getters.cars
+      },
     },
     methods: {
       showDetails (detail) {
-        console.log(detail)
         this.show_details = true
         this.$emit('car-details', detail)
         this.$emit('can-continue', {value: true})
