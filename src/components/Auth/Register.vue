@@ -31,8 +31,8 @@
                   label="Confirm Password"
                   type="password"
                   :counter="6"
-                  :rules="ConfirmPasswordRules"
-                  v-model="ConfirmPassword"
+                  :rules="confirmPasswordRules"
+                  v-model="confirmPassword"
               ></v-text-field>
             </v-form>
           </v-card-text>
@@ -52,25 +52,15 @@
 </template>
 
 <script>
+  import { rulesMixin } from '@/mixins'
   export default {
+    mixins: [rulesMixin],
     data () {
       return {
         email: '',
         password: '',
-        ConfirmPassword: '',
-        ConfirmPasswordRules: [
-          v => !!v || 'Password is required',
-          v => v === this.password || 'Password should match'
-        ],
-        valid: false,
-        emailRules: [
-          v => !!v || 'E-mail is required',
-          v => /.+@.+/.test(v) || 'E-mail must be valid'
-        ],
-        passwordRules: [
-          v => !!v || 'Password is required',
-          v => (v && v.length <= 6) || 'Password must be equal or 10 characters'
-        ]
+        confirmPassword: '',
+        valid: false
       }
     },
     computed: {
@@ -85,11 +75,12 @@
             email: this.email,
             password: this.password
           }
+
           this.$store.dispatch('registerUser', user)
             .then(() => {
               this.$router.push('/')
             })
-            .catch(error => console.log(error))
+            .catch(() => {})
         }
       }
     }

@@ -1,13 +1,14 @@
 <template>
-  <v-stepper v-model="e1">
+  <v-stepper v-if="stepper" v-model="e1">
     <v-stepper-header>
       <template v-for="(step, index) in steps">
         <v-stepper-step
             :complete="e1 > index+1"
             :key="`${index+1}-step`"
             :step="index + 1"
-            editable
+            :editable="e1 > index+1"
         >
+          <v-icon>fas fa-file-signature</v-icon>
           {{ step }}
         </v-stepper-step>
 
@@ -73,6 +74,60 @@
 
     </v-stepper-items>
   </v-stepper>
+  <div v-else>
+    <v-card>
+      <v-container
+          grid-list-md
+      >
+        <v-layout row wrap>
+          <v-flex
+              v-for="card in computedCards"
+              v-bind="{ [`xs${card.flex}`]: true }"
+              :key="card.title"
+          >
+            <v-card>
+              <v-card-media
+                  :src="card.src"
+                  height="200px"
+              >
+                <v-container
+                    fill-height
+                    fluid
+                    pa-2
+                >
+                  <v-layout fill-height>
+                    <v-flex xs12 align-end flexbox>
+                      <span class="headline white--text" v-text="card.title"></span>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </v-card-media>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn icon>
+                  <v-icon>favorite</v-icon>
+                </v-btn>
+                <v-btn icon>
+                  <v-icon>bookmark</v-icon>
+                </v-btn>
+                <v-btn icon>
+                  <v-icon>share</v-icon>
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-card>
+    <div class="text-xs-center">
+      <v-pagination
+          v-model="currentPage"
+          :length="cards.length/perPage"
+          :click.prevent="clickPagination(currentPage)"
+      ></v-pagination>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -97,7 +152,24 @@
         carDetails: null,
         userDetails: null,
         userDrivers: null,
-        contractType: ''
+        contractType: '',
+        stepper: true,
+        currentPage: 2,
+        perPage: 4,
+        cards: [
+          { title: 'Pre-fab homes 1', src: 'https://cdn.vuetifyjs.com/images/cards/house.jpg', flex: 6 },
+          { title: 'Favorite road trips 2', src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg', flex: 6 },
+          { title: 'Best airlines 3', src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg', flex: 6 },
+          { title: 'Pre-fab homes 4', src: 'https://cdn.vuetifyjs.com/images/cards/house.jpg', flex: 6 },
+          { title: 'Favorite road trips 5', src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg', flex: 6 },
+          { title: 'Best airlines 6', src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg', flex: 6 },
+          { title: 'Pre-fab homes 7', src: 'https://cdn.vuetifyjs.com/images/cards/house.jpg', flex: 6 },
+          { title: 'Favorite road trips 8', src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg', flex: 6 },
+          { title: 'Best airlines 9', src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg', flex: 6 },
+          { title: 'Pre-fab homes 10', src: 'https://cdn.vuetifyjs.com/images/cards/house.jpg', flex: 6 },
+          { title: 'Favorite road trips 11', src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg', flex: 6 },
+          { title: 'Best airlines 12', src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg', flex: 6 }
+        ]
       }
     },
     watch: {
@@ -136,7 +208,30 @@
       },
       contract_type (payload) {
         this.contractType = payload
+      },
+      clickPagination (e) {
+        console.log(e, this.offset, this.limit)
       }
+    },
+    computed: {
+      offset() {
+        return ((this.currentPage - 1) * this.perPage);
+      },
+      limit() {
+        return (this.offset + this.perPage);
+      },
+      numOfPages() {
+        return Math.ceil(this.cards.length / this.perPage);
+      },
+      computedCards() {
+        if (this.offset > this.cards.length) {
+          this.currentPage = this.numOfPages;
+        }
+        return this.cards.slice(this.offset, this.limit);
+      }
+    },
+    created () {
+      console.log(this.$vuetify)
     }
   }
 </script>

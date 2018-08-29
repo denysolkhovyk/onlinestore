@@ -4,6 +4,7 @@ import products from './modules/products'
 import user from './modules/user'
 import common from './modules/common'
 import contract from './modules/contract'
+import orders from './modules/orders'
 
 Vue.use(Vuex)
 
@@ -12,6 +13,7 @@ export default new Vuex.Store({
     products,
     user,
     common,
-    contract
+    contract,
+    orders
   }
 })

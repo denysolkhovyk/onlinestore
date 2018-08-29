@@ -16,6 +16,7 @@
         :search="search"
         :pagination.sync="pagination"
         hide-actions
+        :loading="loading"
         class="elevation-1"
     >
       <template slot="items" slot-scope="props">
@@ -25,7 +26,7 @@
       </template>
     </v-data-table>
     <div class="text-xs-center pt-2">
-      <v-pagination v-model="pagination.page" :length="pages"></v-pagination>
+      <v-pagination v-model="pagination.page" :total-visible="5" :length="20"></v-pagination>
     </div>
   </v-container>
   <v-container v-else>
@@ -160,7 +161,8 @@
           }
         ],
         pagination: {
-          page: 1
+          page: 1,
+          visible: 7
         },
         show_details: false,
         search: '',
@@ -179,6 +181,7 @@
         ) {
           return 0
         }
+        console.log(this.pagination)
         return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
       },
       drivers () {
@@ -208,7 +211,8 @@
       }
     },
     created () {
-      console.log(this.users)
+      console.log(this.pagination.totalItems, this.pagination.rowsPerPage)
+      console.log(Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage))
     },
     watch: {
       userDrivers () {

@@ -25,12 +25,20 @@ export default {
     },
     loadProducts (state, payload) {
       state.products = payload
+    },
+    updateProduct (state, {title, description, id}) {
+      const product = state.products.find(a => {
+        return a.id === id
+      })
+      product.title = title
+      product.description = description
     }
   },
   actions: {
-    async createProduct ({commit, getters}, payload) {
+    async createProduct ({commit}, payload) {
       commit('clearError')
       commit('setLoading', true)
+      const image = payload.image
       try {
         const newProduct = new Product(
           payload.title,
@@ -39,15 +47,21 @@ export default {
           payload.material,
           payload.price,
           payload.description,
-          getters.user.id,
-          payload.imageSrc,
-          payload.promo
-        )
+          fb.auth().currentUser.uid,
+          '',
+          payload.promo)
+
         const product = await fb.database().ref('products').push(newProduct)
-        console.log(product)
+        const imageExt = image.name.slice(image.name.lastIndexOf('.'))
+        const fileData = await fb.storage().ref(`products/${product.key}.${imageExt}`).put(image)
+        const imageSrc = await fb.storage().ref().child(fileData.ref.fullPath).getDownloadURL()
+        await fb.database().ref('products').child(product.key).update({ imageSrc })
+        // console.log(product)
+        commit('setLoading', false)
         commit('createProduct', {
           ...newProduct,
-          id: product.key
+          id: product.key,
+          imageSrc
         })
       } catch (error) {
         commit('setError', error.message)
@@ -60,8 +74,8 @@ export default {
       commit('setLoading', true)
       const resultProducts = []
       try {
-        const productVal = await fb.database().ref('products').once('value')
-        const products = productVal.val()
+        const productsVal = await fb.database().ref('products').once('value')
+        const products = productsVal.val()
         Object.keys(products).forEach(key => {
           const product = products[key]
           resultProducts.push(
@@ -81,7 +95,26 @@ export default {
           commit('loadProducts', resultProducts)
           commit('setLoading', false)
         })
-        console.log(products)
+      } catch (error) {
+        commit('setError', error.message)
+        commit('setLoading', false)
+        throw error
+      }
+    },
+    async updateProduct ({commit}, {title, description, id}) {
+      commit('clearError')
+      commit('setLoading', true)
+      try {
+        await fb.database().ref('products').child(id).update({
+          title,
+          description
+        })
+        commit('updateProduct', {
+          title,
+          description,
+          id
+        })
+        commit('setLoading', false)
       } catch (error) {
         commit('setError', error.message)
         commit('setLoading', false)
@@ -99,7 +132,9 @@ export default {
       })
     },
     myProducts (state) {
-      return state.products
+      return state.products.filter(product => {
+        return product.ownerId === fb.auth().currentUser.uid
+      })
     },
     productById (state) {
       return productId => {

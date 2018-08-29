@@ -43,20 +43,14 @@
 </template>
 
 <script>
+  import { rulesMixin } from '@/mixins'
   export default {
+    mixins: [rulesMixin],
     data () {
       return {
         email: '',
         password: '',
-        valid: false,
-        emailRules: [
-          v => !!v || 'E-mail is required',
-          v => /.+@.+/.test(v) || 'E-mail must be valid'
-        ],
-        passwordRules: [
-          v => !!v || 'Name is required',
-          v => (v && v.length <= 6) || 'Password must be equal or 10 characters'
-        ]
+        valid: false
       }
     },
     computed: {
@@ -71,11 +65,12 @@
             email: this.email,
             password: this.password
           }
+
           this.$store.dispatch('loginUser', user)
             .then(() => {
               this.$router.push('/')
             })
-            .catch(error => console.log(error))
+            .catch(() => {})
         }
       }
     },
